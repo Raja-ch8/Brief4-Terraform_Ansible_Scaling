@@ -1,0 +1,49 @@
+#cloud-config
+package_update: true
+
+
+
+packages:
+  - ca-certificates 
+  - curl
+  - gnupg
+  - lsb-release
+  - certbot
+  - default-mysql-client
+
+package_upgrade: true
+package_reboot_if_required: true
+
+users:
+  - default
+
+  - name: celia
+    geco: celia
+    groups: sudo, root, admin
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh_authorized_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+704pPuAbJAhWLwaDNXdI9lY62l8K61UXP1f7uDusDjDBWXZIltw1ZjT/z+0wqurRk+/u9tBrFJgQMmtxo47Kt5I+Ox+3Yc9U2igPHJ/0v3eRwaun0mv1nAyifA/VxsPuW8QGNsK9Y5tA/SapQ7OaVAPjqhYyjkHSlzg/yjtyVK9lq/QqYuHyl3zmQbs4B3V9o4vX4e4MNjrjN/Xto4dBtocyybg+ph5w5G223dh8Wl2HRq3jpX+84v/o5/UQOmOaloOk4liI/mt7WBVhJy4D/u+K6C7dI0sTgkaNYu1WYm0XkehOfrVIPfoY/JEzzTk6Fk9Q0G8VAfpVRPLCgwGT utilisateur@UTILISA-IUAPJVS
+
+  - name: raja
+    geco: raja
+    groups: sudo, root, admin
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh_authorized_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCno1QZ/tXQ+GT4To3zYouq3iMDhRrksttq00iQmQ5tyhQMKCkgQ3xKj5vu9eOyiBbe9pDclhF8T6Bb+qlvo8CoRJrUgthOb+bg8gfYeOipRYpk9IDYq2/Mlf261hXnmNwI5bZrvj/dD5Y+hj16JHma0B22xUp94BJRPj4vNvaWH1HuCFCdvHXga1XjvjggOl45lg+jDBirSl+nvnuFiiGfBfIa+ZFsYgTfapYIrbDi8PWk2shD7QuJvXiGDEd9dDCNcSe8Dslr8+M6CRRmnpPK8wJZiZrvnrPRw3tRuFLxR5V1ip3YMiuvfktw6Qg+RboJeoSw41qblwpH9bur0dt7vd8+/QiUbGp+x5UPn2PpRmOKqTMbRno3RTxaQFaemRzszn0vJIq4bH9NloVELo0GhIcadAmlIdAdLX63NoNJ2LCv6hZhBLJNtf5PZVjkWBYgbsxFPyu6bP532TAg3iwj40sFCXHXzqaTYSm1bzhCk+RGrdvcB760D1aoTXLEKqzoeocjpAuL6lI0JBvKMO+tEpS0M+cHPOTgPz5ZLEbjDdZHw4PzFyt0LaelPwXN8fl3hU89HH5E1iT/qPSCQTIwMnU9y+1fojMuXPYC7lb8bRFcUyAB5L35NOFhIiEZtd50NZsndAelJhXV9zQ9bj55MjYKQVgpl8RdbtpTUE8UgQ== rajac@LAPTOP-FI95FL62
+  
+  - name: paul
+    geco: paul
+    groups: sudo, root, admin
+    sudo: 'ALL=(ALL) NOPASSWD:ALL'
+    ssh_authorized_keys: 
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC0agEe2jMnbMN3OX6bunAdpOoK7idzd5RajsTYcUuF+x1iqqUIXNqDmn6r518hl/NBzUFHshv5k/lasB5pUbHhS2MLpm9t56d5pHnSd3DfAieIggfrpk4RN5yKyKfYQ9DGNjvXgzXy2lSKnXG8fPrkhReJKGpuXe/se5UkpUtGyXQ4BQsAfaArzp0etWZF/KwyZ7ckfOsb7iHCicgoUjqyXbdpP+EooyhSsj6HRhINQ3OuSmtRhrYZLyYXbI/FuN5mtR/+2D4EOhEHFhlFWObJR7TUYRPOW/rCGF/2hNrqwdwWvSmHNg54wRGWmzmrOHZBgyIOAol20+2LUx53eaKObN8lx2chcHVGwEoLjEqbcTv2iQ/C0sTKrqKnvZyEqVftDS/3wMRt5kz4YwJmH7Bk+dZfzdoZX4lqtoYRZKljSmASn836TsH5SdAaNeD62BJ2Efgp3eKxr3ht5vZ9Ktf/aSxpayQ1rJXAmHYeueJI1p3c3v4cnJBpxwSG6cPNvGE= utilisateur@UTILISA-RDIKR2H
+
+runcmd:
+  - sudo mkdir -p /etc/apt/keyrings
+  - sudo curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  - sudo echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  - sudo apt-get update
+  - sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  - sudo apt-get update 
+  - sudo docker pull jenkins/jenkins:lts-jdk11
+  - sudo docker run -d -p 8080:8080 -p 50000:50000 --restart=unless-stopped jenkins/jenkins:lts-jdk11
